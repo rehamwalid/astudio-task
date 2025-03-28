@@ -20,6 +20,8 @@ return new class extends Migration
 
             $table->unique(['job_id', 'location_id']);
             $table->timestamps();
+            
+            $table->index(['job_id', 'location_id']);
         });
     }
 

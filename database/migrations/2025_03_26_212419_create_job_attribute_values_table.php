@@ -19,6 +19,12 @@ return new class extends Migration
             $table->foreign('job_id')->references('id')->on('jobs')->onDelete('cascade');
             $table->foreign('attribute_id')->references('id')->on('attributes')->onDelete('cascade');
             $table->timestamps();
+
+            $table->index('job_id');
+            $table->index('attribute_id');
+            $table->index(['job_id', 'attribute_id']);
+            $table->index('value');
+
         });
     }
 

@@ -17,6 +17,9 @@ return new class extends Migration
             $table->string('type');
             $table->text('options')->nullable();
             $table->timestamps();
+
+            $table->index('name');
+
         });
     }
 
