@@ -1,66 +1,130 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+#   Laravel Job Board Application
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This Laravel application provides a platform for managing job listings with advanced filtering capabilities.
 
-## About Laravel
+##   Setup Instructions
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+1.  Clone the repository.
+2.  Install dependencies: `composer install`
+3.  Create a copy of the `.env.example` file and name it `.env`.
+4.  Configure your database connection in the `.env` file.
+5.  Generate an application key: `php artisan key:generate`
+6.  Run database migrations: `php artisan migrate`
+7.  Seed the database with initial data (optional): `php artisan db:seed`
+8.  Start the development server: `php artisan serve`
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+##   API Endpoints
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+* `GET /api/jobs`: Retrieves a list of jobs, with optional filtering.
 
-## Learning Laravel
+##   Filtering Jobs
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+The `/api/jobs` endpoint supports advanced filtering of job listings via the `filter` query parameter. The filtering syntax allows for combining multiple conditions with logical operators and grouping.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+###   Filter Syntax
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+The general structure of the filter query parameter is:
 
-## Laravel Sponsors
+/api/jobs?filter=(condition1) AND/OR (condition2) AND/OR ...
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
 
-### Premium Partners
+* **Conditions:** Individual filtering criteria.
+* **Logical Operators:** `AND`, `OR` to combine conditions.
+* **Grouping:** Parentheses `()` to control the order of operations.
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+###   Condition Types and Operators
 
-## Contributing
+####   1.  Basic Field Filtering
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+These filters apply to standard job fields.
 
-## Code of Conduct
+* **Text/String Fields** (`title`, `description`, `company_name`):
+    * `=` , `!=`: Equality operators.
+    * `LIKE`: Substring matching (e.g., `title LIKE %Engineer%`).
+* **Numeric Fields** (`salary_min`, `salary_max`):
+    * `=` , `!=`: Equality operators.
+    * `>`, `<`, `>=`, `<=`: Comparison operators.
+* **Boolean Fields** (`is_remote`):
+    * `=` , `!=`: Equality operators (use `1` for true, `0` for false).
+* **Enum Fields** (`job_type`, `status`):
+    * `=` , `!=`: Equality operators.
+    * `IN`: Match any of a set of values (e.g., `job_type IN (full-time, part-time)`).
+* **Date Fields** (`published_at`, `created_at`, `updated_at`):
+    * `=` , `!=`: Equality operators.
+    * `>`, `<`, `>=`, `<=`: Comparison operators.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+####   2.  Relationship Filtering
 
-## Security Vulnerabilities
+These filters apply to the relationships of the `Job` model.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+* Supported Relationships: `languages`, `locations`, `categories`
+* Operators:
+    * `=`: Exact match.
+    * `HAS_ANY`: Job has any of the specified related values.
+    * `IS_ANY`: Relationship matches any of the specified values (often behaves the same as `HAS_ANY`).
+    * `EXISTS`: Relationship exists (job has at least one related record).
 
-## License
+####   3.  EAV Attribute Filtering
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+These filters apply to the dynamic attributes of jobs.
+
+* Operator support varies based on the attribute's `type`:
+    * **Text Attributes:** `=`, `!=`, `LIKE`
+    * **Number Attributes:** `=`, `!=`, `>`, `<`, `>=`, `<=`
+    * **Boolean Attributes:** `=`, `!=`
+    * **Select Attributes:** `=`, `!=`, `IN`
+
+###   Filter Examples
+
+* Simple:
+    * `/api/jobs?filter=title=Software Engineer`
+    * `/api/jobs?filter=salary_min>60000`
+* Combined with AND:
+    * `/api/jobs?filter=job_type=full-time AND salary_min>50000`
+* Grouped with OR:
+    * `/api/jobs?filter=(job_type=full-time OR job_type=part-time) AND salary_min>50000`
+* Relationship filtering:
+    * `/api/jobs?filter=languages HAS_ANY (PHP,JavaScript)`
+    * `/api/jobs?filter=locations IS_ANY (New York,Remote)`
+    * `/api/jobs?filter=categories EXISTS`
+* EAV attribute filtering:
+    * `/api/jobs?filter=attribute:years_experience>=3`
+    * `/api/jobs?filter=attribute:degree_required IN (Bachelor,Master)`
+* Complex example:
+    * `/api/jobs?filter=(job_type=full-time AND (languages HAS_ANY (PHP,JavaScript))) AND (locations IS_ANY (New York,Remote)) AND attribute:years_experience>=3 AND salary_min!=100`
+
+##   JobFilterService Class
+
+The `JobFilterService` class handles the parsing and application of these filters to Eloquent queries.
+
+###   Key Methods
+
+* `__construct(Request $request)`: Initializes the service with the incoming request, extracting the `filter` query parameter.
+* `parseToJson(string $filterString)`: Parses the filter string into a nested array structure that represents the conditions, operators, and grouping. This method handles parentheses and `AND`/`OR` logic.
+* `processCondition(string $condition)`: Parses a single filter condition string to extract the key, operator, and value. It uses regular expressions to identify different condition patterns.
+* `parseConditionString(string $conditionString)`: Parses a nested condition string (the part within parentheses).
+* `defineFilterType(string $name)`: Determines the type of filter being applied (field, relationship, or attribute).
+* `fieldType(string $fieldName)`: Determines the data type of a given field (string, number, boolean, enum, date).
+* `applyFilters(array $filters)`: Applies the parsed filter conditions to the Eloquent query. This is the main method that constructs the `where` and `whereHas` clauses.
+* `fieldFilter(array $filter)`: Applies a filter to a standard job field.
+* `relationshipFilter(array $filter)`: Applies a filter to a relationship (e.g., `languages`, `locations`).
+* `attributeFilter(array $filter)`: Applies a filter to an EAV attribute.
+
+###   Design Choices and Assumptions
+
+* The service is designed to be flexible and extensible, allowing for the addition of new filter types and operators.
+* It assumes a specific structure for the database tables and relationships.
+* Error handling is implemented by throwing exceptions for invalid filter syntax or data.
+* The code prioritizes readability and maintainability, with clear method names and comments.
+* A `JobResource` class is used to format the API response for job data, ensuring consistency and controlling data exposure.
+
+###   Performance Optimizations
+
+* **Indexing:** To optimize database query performance, especially for filtering, the following indexes are recommended:
+    * **`jobs` table:** Indexes on `title`, `company_name`, `salary_min`, `salary_max`, `is_remote`, `job_type`, `status`, and `published_at`.
+    * **Many-to-many pivot tables** (`job_language`, `job_location`, `job_category`): Composite indexes on `job_id` and the related model's ID (e.g., `language_id`).
+    * **`attributes` table:** Index on `name`.
+    * **`job_attribute_values` table:** Indexes on `job_id`, `attribute_id`, and a composite index on `job_id` and `attribute_id`. Consider an index on `value` depending on data type and cardinality.
+* **Eager Loading:** The `applyFilters` method supports eager loading of relationships via the `$with` parameter. This prevents the N+1 query problem and significantly improves performance when accessing related data (e.g., `languages`, `locations`, `categories`). Use eager loading strategically based on your API's usage patterns.
+
+
