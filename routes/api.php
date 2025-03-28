@@ -18,4 +18,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('job', [App\Http\Controllers\Controller::class, 'index']);
+Route::get('jobs', [App\Http\Controllers\JobController::class, 'index']);

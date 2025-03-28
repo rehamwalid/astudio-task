@@ -8,10 +8,17 @@ use App\Models\Language;
 use App\Models\Location;
 use App\Models\Category;
 use App\Models\JobAttributeValue;
+use App\Enums\JobType;
+use App\Enums\JobStatus;
 
 class Job extends Model
 {
     use HasFactory;
+
+    protected $casts = [
+        'status' => JobStatus::class,
+        'type' => JobType::class,
+    ];
 
     public function languages()
     {
@@ -25,7 +32,7 @@ class Job extends Model
 
     public function categories()
     {
-        return $this->belongsToMany(Category::class);
+        return $this->belongsToMany(Category::class, 'job_category');	
     }
 
     public function attributes()

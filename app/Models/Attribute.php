@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\jobAttributeValues;
 use App\Enums\AttributeType;
-
+use App\Models\Job;
 class Attribute extends Model
 {
     use HasFactory;
