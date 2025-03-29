@@ -1,4 +1,4 @@
-#   Laravel Job Board Application
+#   Astudio Filter System
 
 This Laravel application provides a platform for managing job listings with advanced filtering capabilities.
 
