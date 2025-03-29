@@ -77,16 +77,14 @@ These filters apply to the dynamic attributes of jobs.
 ###   Filter Examples
 
 * Simple:
-    * `/api/jobs?filter=title=Software Engineer`
+    * `/api/jobs?filter=title LIKE Night`
     * `/api/jobs?filter=salary_min>60000`
 * Combined with AND:
     * `/api/jobs?filter=job_type=full-time AND salary_min>50000`
-* Grouped with OR:
-    * `/api/jobs?filter=(job_type=full-time OR job_type=part-time) AND salary_min>50000`
 * Relationship filtering:
     * `/api/jobs?filter=languages HAS_ANY (PHP,JavaScript)`
     * `/api/jobs?filter=locations IS_ANY (New York,Remote)`
-    * `/api/jobs?filter=categories EXISTS`
+    * `/api/jobs?filter=categories EXISTS()`
 * EAV attribute filtering:
     * `/api/jobs?filter=attribute:years_experience>=3`
     * `/api/jobs?filter=attribute:degree_required IN (Bachelor,Master)`
